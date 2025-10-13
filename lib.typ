@@ -204,6 +204,7 @@
   show heading: set block(spacing: 1.2em)
 
   show heading.where(level: 1): it => [
+    #pagebreak(weak: true)
     #set text(font: font.cjk-bold, size: 18pt)
     #align(center)[#it]
     #v(11.5pt)
