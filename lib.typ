@@ -215,6 +215,16 @@
     #it
   ]
 
+  // 三级标题 黑体 小四号
+  show heading.where(level: 3): it => [
+    #set text(font: font.cjk-bold, size: 12pt)
+    #it
+  ]
+  // 四级标题 黑体 小四号
+  show heading.where(level: 4): it => [
+    #set text(font: font.cjk-bold, size: 12pt)
+    #it
+  ]
   // 代码块样式
   show raw.where(block: false): body => box(fill: raw-color, inset: (x: 3pt, y: 0pt), outset: (x: 0pt, y: 3pt), radius: 2pt, {
     set par(justify: false)
