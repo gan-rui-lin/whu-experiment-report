@@ -1,25 +1,65 @@
 #import "lib.typ": *
 
-#show: ori.with(
-  title: "XXX系统总体设计与实现",
-  course: "嵌入式系统设计",
-  major: "计算机科学与技术",
-  teacher1: ("张三", "副教授"),
-  // teacher2: ("李四", "教授"),
-  student_id: "2023XXXXXXXXX",
-  student_name: "XXX",
-  // author: "Grl",
-  year: "二五",
-  month: "十",
-  maketitle: true,
-  makeoutline: true,
-  outline-depth: 3,
-  first-line-indent: auto,
-  // font: font,
+#import "@preview/kouhu:0.1.0": kouhu
+// 可配置信息
+
+#let title = "XXXXXXXXXXXX实验"
+#let course = "XXXXXXXXXXXXXX"
+#let major = "XXXXXXXXXXXXXX"
+#let teacher1_name = "张三"
+#let teacher1_title = "副教授"
+#let teacher2_name = none
+#let teacher2_title = none
+#let student_id = "2023XXXXXXXXX"
+#let student_name = "李四"
+#let year = "二五"
+#let month = "十"
+#let maketitle = true
+#let makeabstract = true
+#let makeoutline = true
+#let outline-depth = 3
+#let first-line-indent = auto
+#let font = none // 使用默认 font
+
+#let abstract = [
+  #kouhu(builtin-text: "zhufu", offset: 5, length: 100)
+]
+
+#let teacher1 = (teacher1_name, teacher1_title)
+#let teacher2 = if teacher2_name == none or teacher2_name == "" {
+  none
+} else {
+  (teacher2_name, teacher2_title)
+}
+
+#let keywords = (
+  kouhu(builtin-text: "simp", length: 3),
+  kouhu(builtin-text: "zhufu", offset: 2, length: 3),
+  kouhu(builtin-text: "zhufu", offset: 42, length: 4),
+  kouhu(builtin-text: "zhufu", length: 6),
 )
 
-// 应用中文报告样式后的额外设置
-#set heading(numbering: numbly("{1:1}", default: "1.1 "))
+#show: ori.with(
+  title: title,
+  course: course,
+  major: major,
+  teacher1: teacher1,
+  teacher2: teacher2,
+  student_id: student_id,
+  student_name: student_name,
+  year: year,
+  month: month,
+  maketitle: maketitle,
+  makeabstract: makeabstract,
+  abstract: [
+    #abstract
+  ],
+  keywords: keywords,
+  makeoutline: makeoutline,
+  outline-depth: outline-depth,
+  first-line-indent: first-line-indent,
+  font: font,
+)
 
 = 分治法
 
