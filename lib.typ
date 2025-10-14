@@ -150,6 +150,10 @@
   maketitle: false,
   makeoutline: false,
   outline-depth: 2,
+  // 摘要配置
+  makeabstract: false,
+  abstract: none,
+  keywords: none,
   body,
 ) = context {
   assert(media == "screen" or media == "print", message: "media must be 'screen' or 'print'")
@@ -159,6 +163,11 @@
   let bg-color = if theme == "dark" { rgb("#1f1f1f") } else { rgb("#ffffff") }
   let text-color = if theme == "dark" { rgb("#ffffff") } else { rgb("#000000") }
   let raw-color = if theme == "dark" { rgb("#27292c") } else { rgb("#f0f0f0") }
+
+  let font_used = default-font
+  if font != none {
+    font_used = font
+  }
 
   // 收集封面信息
   let cover_info = (
@@ -174,25 +183,29 @@
   )
 
   // 正文：拉丁字母用 Times New Roman，CJK 用宋体
-  set text(font: ((name: font.main, covers: "latin-in-cjk"), font.cjk), size: 12pt)
+  set text(font: ((name: font_used.main, covers: "latin-in-cjk"), font_used.cjk), size: 12pt)
   set par(leading: 11pt) // 12pt + 11pt = 23pt 基线距
   // emph：拉丁用 TNR，中文用楷体；中文稍微放大一点，避免显小
   show emph: it => {
-    set text(font: ((name: font.main, covers: "latin-in-cjk"), font.emph-cjk))
+    set text(font: ((name: font_used.main, covers: "latin-in-cjk"), font_used.emph-cjk))
     // 仅对中文（Han script）放大 ~6%
     show regex("\\p{script=Han}"): set text(size: 1.06em)
     it
   }
-  show raw: set text(font: ((name: font.mono, covers: "latin-in-cjk"), font.cjk))
+  show raw: set text(font: ((name: font_used.mono, covers: "latin-in-cjk"), font_used.cjk))
   show math.equation: it => {
-    set text(font: font.math)
-    show regex("\p{script=Han}"): set text(font: font.math-cjk)
+    set text(font: font_used.math)
+    show regex("\p{script=Han}"): set text(font: font_used.math-cjk)
     it
   }
 
   // 强调：拉丁保留 TNR，CJK 使用黑体，并加粗
   show strong: it => {
-    set text(font: ((name: font.main, covers: "latin-in-cjk"), font.cjk-bold), weight: "bold", fill: cn-primary-color)
+    set text(
+      font: ((name: font_used.main, covers: "latin-in-cjk"), font_used.cjk-bold),
+      weight: "bold",
+      fill: cn-primary-color,
+    )
     it
   }
 
@@ -205,25 +218,27 @@
 
   show heading.where(level: 1): it => [
     #pagebreak(weak: true)
-    #set text(font: font.cjk-bold, size: 18pt)
+    #set text(font: font_used.cjk-bold, size: 18pt)
     #align(center)[#it]
     #v(11.5pt)
   ]
 
+  set heading(numbering: numbly("{1:1}", default: "1.1 "))
+
   // 二级标题：黑体 四号（14pt）
   show heading.where(level: 2): it => [
-    #set text(font: font.cjk-bold, size: 14pt)
+    #set text(font: font_used.cjk-bold, size: 14pt)
     #it
   ]
 
   // 三级标题 黑体 小四号
   show heading.where(level: 3): it => [
-    #set text(font: font.cjk-bold, size: 12pt)
+    #set text(font: font_used.cjk-bold, size: 12pt)
     #it
   ]
   // 四级标题 黑体 小四号
   show heading.where(level: 4): it => [
-    #set text(font: font.cjk-bold, size: 12pt)
+    #set text(font: font_used.cjk-bold, size: 12pt)
     #it
   ]
   // 代码块样式
@@ -284,13 +299,42 @@
     pagebreak()
   }
 
+  // 摘要页（可选，局部样式不污染全局）
+  if makeabstract {
+    pagebreak(weak: true)
+    align(center)[
+      #set text(font: font_used.cjk-bold, size: 18pt)
+      摘要
+    ]
+    v(1em)
+    // 摘要正文（局部）
+    box(width: 100%)[
+      #set par(first-line-indent: 2em)
+      #par()[#text()[#h(0.0em)]]
+      #set text(font: ((name: font_used.main, covers: "latin-in-cjk"), font_used.cjk), size: 12pt)
+      #if abstract != none [#abstract]
+    ]
+    v(1.2em)
+    // 关键词（局部）：标签黑体小四，词条宋体小四
+    box(width: 100%)[
+
+      #set text(font: ((name: font_used.main, covers: "latin-in-cjk"), font_used.cjk), size: 12pt)
+      *关键词*：
+      #if keywords != none [
+        #let kw = if type(keywords) == array { keywords.join("；") } else { keywords }
+        #kw
+      ]
+    ]
+    pagebreak()
+  }
+
   // 目录
   if makeoutline {
     // 覆盖可能由外部包注入的目录标题（如"Contents"）
     show outline: it => it
     // 目录标题：黑体小二
     align(center)[
-      #set text(font: font.cjk-bold, size: 18pt)
+      #set text(font: font_used.cjk-bold, size: 18pt)
       目录
     ]
     v(0.8em)
@@ -300,7 +344,7 @@
     show outline.entry: it => {
       // 按层级动态设置字号和粗细
       let size = if it.level == 1 { 14pt } else { 12pt }
-      let font_chosen = if it.level == 1 { font.cjk-bold } else { font.cjk }
+      let font_chosen = if it.level == 1 { font_used.cjk-bold } else { font_used.cjk }
       set text(font: font_chosen, size: size)
       it
     }
