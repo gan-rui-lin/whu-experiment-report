@@ -2,7 +2,8 @@
 
 #import "@preview/kouhu:0.1.0": kouhu
 // 可配置信息
-
+#let cover_header = "武汉大学计算机学院"
+#let report_title = "本科生课程设计报告"
 #let title = "XXXXXXXXXXXX实验"
 #let course = "XXXXXXXXXXXXXX"
 #let major = "XXXXXXXXXXXXXX"
@@ -12,8 +13,8 @@
 #let teacher2_title = none
 #let student_id = "2023XXXXXXXXX"
 #let student_name = "李四"
-#let year = "二五"
-#let month = "十"
+#let year = "2025"
+#let month = "10"
 #let maketitle = true
 #let makeabstract = true
 #let makeoutline = true
@@ -22,7 +23,7 @@
 #let font = none // 使用默认 font
 
 #let abstract = [
-  #kouhu(builtin-text: "zhufu", offset: 5, length: 100)
+  #kouhu(builtin-text: "zhufu", offset: 8, length: 800)
 ]
 
 #let teacher1 = (teacher1_name, teacher1_title)
@@ -40,6 +41,8 @@
 )
 
 #show: ori.with(
+  cover_header: cover_header,
+  report_title: report_title,
   title: title,
   course: course,
   major: major,

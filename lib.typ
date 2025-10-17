@@ -4,6 +4,7 @@
 #import "@preview/cmarker:0.1.2": render as cmarker-render
 #import "@preview/theorion:0.3.2": *
 #import "@preview/zebraw:0.4.4": *
+#import "@preview/a2c-nums:0.0.1": int-to-cn-num, int-to-cn-ancient-num, int-to-cn-simple-num, num-to-cn-currency
 #import cosmos.fancy: *
 
 #let md = cmarker-render.with(math: mitex)
@@ -29,15 +30,17 @@
 #let argmin = math.op("argmin", limits: true)
 
 #let cover(
+  cover_header: "武汉大学计算机学院",
+  report_title: "本科生课程设计报告",
   title: "XXX系统总体设计与实现",
   major: "计算机科学与技术",
   course: "嵌入式系统设计",
   teacher1: ("张三", "副教授"),
   teacher2: none, // 设为 none 可隐藏教师二
-  student_id: "2020XXXXXXX",
+  student_id: "2023XXXXXXX",
   student_name: "王五",
-  year: "二五",
-  month: "十",
+  year: "2025",
+  month: "10",
 ) = {
   // 构建 rows 列表
   let rows = ([
@@ -88,12 +91,12 @@
     // 顶部学校信息
     #align(center)[
       #set text(font: "SimSun", size: 26pt)
-      武汉大学计算机学院
+      #cover_header
     ]
     #v(1.2em)
     #align(center)[
       #set text(font: "SimSun", size: 26pt)
-      本科生课程设计报告
+      #report_title
     ]
 
     #v(3em)
@@ -122,7 +125,8 @@
     // 日期
     #align(center)[
       #set text(font: "SimSun", size: 15pt)
-      二〇#year 年 #month 月
+      // 二〇#year 年 #month 月
+      #int-to-cn-simple-num(year) 年 #int-to-cn-num(month) 月
     ]
   ]
 }
@@ -132,6 +136,8 @@
   theme: "light",
   size: 10.5pt,
   screen-size: 10.5pt,
+  cover_header: none,
+  report_title: none,
   title: none,
   major: "计算机科学与技术",
   course: none,
@@ -171,6 +177,8 @@
 
   // 收集封面信息
   let cover_info = (
+    cover_header: cover_header,
+    report_title: report_title,
     title: title,
     major: major,
     course: course,
@@ -223,7 +231,7 @@
     #v(11.5pt)
   ]
 
-  set heading(numbering: numbly("{1:1}", default: "1.1 "))
+  set heading(numbering: numbly("", default: "1.1 "))
 
   // 二级标题：黑体 四号（14pt）
   show heading.where(level: 2): it => [
@@ -286,13 +294,15 @@
     // 使用 cover_info 渲染封面（无需手动调用 cover(...)）
     let cv = cover_info
     cover(
-      title: if cv.title != none { cv.title } else { "" },
-      major: if cv.major != none { cv.major } else { "" },
-      course: if cv.course != none { cv.course } else { "" },
-      teacher1: if cv.teacher1 != none { cv.teacher1 } else { ("", "") },
-      teacher2: if cv.teacher2 != none { cv.teacher2 } else { ("", "") },
-      student_id: if cv.student_id != none { cv.student_id } else { "" },
-      student_name: if cv.student_name != none { cv.student_name } else { "" },
+      cover_header: cv.cover_header,
+      report_title: cv.report_title,
+      title: cv.title,
+      major: cv.major,
+      course: cv.course,
+      teacher1: cv.teacher1,
+      teacher2: cv.teacher2,
+      student_id: cv.student_id,
+      student_name: cv.student_name,
       year: if cv.year != none { cv.year } else { 0 },
       month: if cv.month != none { cv.month } else { 0 },
     )
