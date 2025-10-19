@@ -265,7 +265,59 @@
     } else { it }
   }
 
+  // 引用样式（中文）：
+  // - 图：图 n
+  // - 表：表 n
+  // - 标题：第 n 节（使用标题自身的编号串）
+  // - 公式：式 n（遵循公式编号格式）
+  // 其中 n 部分可点击并显示为红色
+  // 其他类型引用保持默认
+  show ref: it => {
+    let el = it.element
+    if el == none { return it }
+
+    // 图与表（figure）
+    if el.func() == figure {
+      let is_table = el.kind == table
+      let prefix = if is_table { "表" } else { "图" }
+      let num = numbering(el.numbering, ..counter(figure).at(el.location()))
+      [
+        #prefix
+        #link(el.location())[
+          #set text(fill: red)
+          #num
+        ]
+      ]
+    } else if el.func() == heading {
+      let num = numbering(el.numbering, ..counter(heading).at(el.location()))
+      let tail = if el.level == 1 { "章" } else { "节" }
+      [
+        第
+        #link(el.location())[
+          #set text(fill: red)
+          #num
+        ]
+        #tail
+      ]
+    } else if el.func() == math.equation {
+      let num = numbering(el.numbering, ..counter(equation).at(el.location()))
+      [
+        式 (
+        #link(el.location())[
+          #set text(fill: red)
+          #num
+        ]
+        )
+      ]
+    } else {
+      it
+    }
+  }
+
   // 表格样式
+  // 统一将图注前缀改为中文“图”，表格为“表”
+  set figure(supplement: "图")
+  show figure.where(kind: table): set figure(supplement: "表")
   show figure.where(kind: table): set figure.caption(position: top)
 
   // 列表样式
