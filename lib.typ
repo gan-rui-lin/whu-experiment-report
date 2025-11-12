@@ -273,46 +273,56 @@
   // 其中 n 部分可点击并显示为红色
   // 其他类型引用保持默认
   show ref: it => {
-    let el = it.element
-    if el == none { return it }
+      let el = it.element
+      if el == none { return it }
 
-    // 图与表（figure）
-    if el.func() == figure {
-      let is_table = el.kind == table
-      let prefix = if is_table { "表" } else { "图" }
-      let num = numbering(el.numbering, ..counter(figure).at(el.location()))
+      // 图与表（figure）
+      if el.func() == figure {
+      let is-table = el.kind == table
+      let prefix = if is-table { "表" } else { "图" }
+
+      // 获取编号（字符串 → 整数）
+      let get-num = (ctr) => int(numbering(el.numbering, ..counter(ctr).at(el.location())))
+      let n-table = get-num(table)
+      let n-figure = get-num(figure)
+
+      // 计算实际显示编号
+      let display-val = if is-table { n-table + 1 } else { n-figure - n-table }
+
       [
         #prefix
         #link(el.location())[
           #set text(fill: red)
-          #num
+          #(str(display-val))
         ]
       ]
     } else if el.func() == heading {
-      let num = numbering(el.numbering, ..counter(heading).at(el.location()))
-      let tail = if el.level == 1 { "章" } else { "节" }
-      [
-        第
-        #link(el.location())[
-          #set text(fill: red)
-          #num
+        let num = numbering(el.numbering, ..counter(heading).at(el.location()))
+        let tail = if el.level == 1 { "章" } else { "节" }
+        [
+          第
+          #link(el.location())[
+            #set text(fill: red)
+            #num
+          ]
+          #tail
         ]
-        #tail
-      ]
-    } else if el.func() == math.equation {
-      let num = numbering(el.numbering, ..counter(equation).at(el.location()))
-      [
-        式 (
-        #link(el.location())[
-          #set text(fill: red)
-          #num
+
+      } else if el.func() == math.equation {
+        let num = numbering(el.numbering, ..counter(equation).at(el.location()))
+        [
+          式 (
+          #link(el.location())[
+            #set text(fill: red)
+            #num
+          ]
+          )
         ]
-        )
-      ]
-    } else {
-      it
+      } else {
+        it
+      }
     }
-  }
+
 
   // 表格样式
   // 统一将图注前缀改为中文“图”，表格为“表”
