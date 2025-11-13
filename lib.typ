@@ -20,8 +20,6 @@
   math-cjk: "Noto Serif SC",
 )
 #let cn-primary-color = rgb("#1f2020")
-#let cn-accent-color = rgb("#2e8b57")
-#let cn-code-bg = rgb("#FFFFFF")
 
 // 数学定义
 #let prox = math.op("prox")
@@ -132,34 +130,35 @@
 }
 
 #let ori(
-  media: "print",
-  theme: "light",
-  size: 10.5pt,
-  screen-size: 10.5pt,
-  cover_header: none,
-  report_title: none,
-  title: none,
-  major: "计算机科学与技术",
+  abstract: none,
+  author: none,
   course: none,
-  teacher1: none,
-  teacher2: none,
+  cover_header: none,
+  first-line-indent: (amount: 0pt, all: false),
+  first_level_heading_centered: true,
+  font: default-font,
+  heading_numbering: numbly("", default: "1.1 "),
+  keywords: none,
+  lang: "zh",
+  major: "计算机科学与技术",
+  makeabstract: false,
+  makeoutline: false,
+  maketitle: false,
+  media: "print",
+  month: 6,
+  outline-depth: 2,
+  region: "cn",
+  report_title: none,
+  screen-size: 10.5pt,
+  size: 10.5pt,
   student_id: "2023XXXXXXXXX",
   student_name: none,
-  year: "二五",
-  month: 6,
-  author: none,
   subject: none,
-  font: default-font,
-  lang: "zh",
-  region: "cn",
-  first-line-indent: (amount: 0pt, all: false),
-  maketitle: false,
-  makeoutline: false,
-  outline-depth: 2,
-  // 摘要配置
-  makeabstract: false,
-  abstract: none,
-  keywords: none,
+  teacher1: none,
+  teacher2: none,
+  theme: "light",
+  title: none,
+  year: 2025,
   body,
 ) = context {
   assert(media == "screen" or media == "print", message: "media must be 'screen' or 'print'")
@@ -170,6 +169,7 @@
   let text-color = if theme == "dark" { rgb("#ffffff") } else { rgb("#000000") }
   let raw-color = if theme == "dark" { rgb("#27292c") } else { rgb("#f0f0f0") }
 
+  // 选择字体
   let font_used = default-font
   if font != none {
     font_used = font
@@ -224,14 +224,20 @@
   }
   show heading: set block(spacing: 1.2em)
 
+  let first_level_heading_position = if first_level_heading_centered {
+    center
+  } else {
+    left
+  }
+
   show heading.where(level: 1): it => [
     #pagebreak(weak: true)
     #set text(font: font_used.cjk-bold, size: 18pt)
-    #align(center)[#it]
+    #align(first_level_heading_position)[#it]
     #v(11.5pt)
   ]
 
-  set heading(numbering: numbly("", default: "1.1 "))
+  set heading(numbering: heading_numbering)
 
   // 二级标题：黑体 四号（14pt）
   show heading.where(level: 2): it => [

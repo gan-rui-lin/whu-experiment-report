@@ -1,7 +1,21 @@
 #import "lib.typ": *
 
 #import "@preview/kouhu:0.1.0": kouhu
+
+
+//>>> 默认字体，可通过设置可配置信息中的 font 来覆盖
+#let font = (
+  main: "Times New Roman",          // 英文主字体
+  mono: "IBM Plex Mono",            // 英文等宽字体
+  cjk: "SimSun",                    // 中文主字体
+  cjk-bold: "SimHei",               // 中文加粗字体
+  emph-cjk: "KaiTi",                // 中文强调字体
+  math: "New Computer Modern Math", // 数学字体
+  math-cjk: "Noto Serif SC",        // 数学中文字体
+)
+
 // 可配置信息
+//>>> 封面信息 
 #let cover_header = "武汉大学计算机学院"
 #let report_title = "本科生课程设计报告"
 #let title = "XXXXXXXXXXXX实验"
@@ -9,30 +23,31 @@
 #let major = "XXXXXXXXXXXXXX"
 #let teacher1_name = "张三"
 #let teacher1_title = "副教授"
-#let teacher2_name = none
-#let teacher2_title = none
-#let student_id = "2023XXXXXXXXX"
-#let student_name = "李四"
-#let year = "2025"
-#let month = "10"
-#let maketitle = true
-#let makeabstract = true
-#let makeoutline = true
-#let outline-depth = 3
+#let teacher2_name = none                               // 若无第二指导教师则设为 none，不显示对应栏
+#let teacher2_title = none                              // 若无第二指导教师则设为 none，不显示对应栏
+#let student_id = "2023XXXXXXXXX"                       // 学号
+#let student_name = "李四"                               // 姓名
+#let year = "2025"                                      // 封面页年份
+#let month = "10"                                       // 封面页月份
+//>>> 报告生成选项
+#let maketitle = true                                   // 是否显示封面页
+#let makeabstract = true                                // 是否显示摘要页
+#let makeoutline = true                                 // 是否显示目录页
+#let outline-depth = 3                                  // 目录深度
 #let first-line-indent = auto
-#let font = none // 使用默认 font
-
+#let font = font                                        // 使用默认 font，传入 none 则使用模板默认字体
+#let first_level_heading_centered = true                // 一级标题是否居中，否则左对齐
+#let heading_numbering = numbly("{1}.", default: "1.1 ")    // 章节编号格式，默认一级标题不编号
+                                                        // 可选传入numbly格式，下面是示例：
+                                                        // numbly("第 {1} 章", default: "1.1 ")
+                                                        // numbly("{1}.", default: "1.1 ")
+//>>> 摘要与关键词
+// 摘要内容
 #let abstract = [
   #kouhu(builtin-text: "zhufu", offset: 8, length: 800)
 ]
 
-#let teacher1 = (teacher1_name, teacher1_title)
-#let teacher2 = if teacher2_name == none or teacher2_name == "" {
-  none
-} else {
-  (teacher2_name, teacher2_title)
-}
-
+// 关键词数组
 #let keywords = (
   kouhu(builtin-text: "simp", length: 3),
   kouhu(builtin-text: "zhufu", offset: 2, length: 3),
@@ -40,6 +55,15 @@
   kouhu(builtin-text: "zhufu", length: 6),
 )
 
+//>>> 不需改动 
+#let teacher1 = (teacher1_name, teacher1_title)
+#let teacher2 = if teacher2_name == none or teacher2_name == "" {
+  none
+} else {
+  (teacher2_name, teacher2_title)
+}
+
+//>>> 生成报告内容 
 #show: ori.with(
   cover_header: cover_header,
   report_title: report_title,
@@ -62,6 +86,8 @@
   outline-depth: outline-depth,
   first-line-indent: first-line-indent,
   font: font,
+  first_level_heading_centered: first_level_heading_centered,
+  heading_numbering: heading_numbering,
 )
 
 = 分治法
