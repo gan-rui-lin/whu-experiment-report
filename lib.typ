@@ -6,6 +6,7 @@
 #import "@preview/zebraw:0.4.4": *
 #import "@preview/a2c-nums:0.0.1": int-to-cn-num, int-to-cn-ancient-num, int-to-cn-simple-num, num-to-cn-currency
 #import cosmos.fancy: *
+#import "@preview/equate:0.3.2": equate
 
 #let md = cmarker-render.with(math: mitex)
 
@@ -271,6 +272,12 @@
     } else { it }
   }
 
+  // 公式样式
+  show: equate.with(breakable: true, sub-numbering: true)
+  set math.equation(numbering: "(1.1)")
+
+  let equation_c = counter("equation")
+
   // 引用样式（中文）：
   // - 图：图 n
   // - 表：表 n
@@ -315,14 +322,13 @@
         ]
 
       } else if el.func() == math.equation {
-        let num = numbering(el.numbering, ..counter(equation).at(el.location()))
+        let num = numbering(el.numbering, ..counter(math.equation).at(el.location()))
         [
-          式 (
+          式 
           #link(el.location())[
             #set text(fill: red)
             #num
           ]
-          )
         ]
       } else {
         it
@@ -338,9 +344,17 @@
 
   // 列表样式
   set list(indent: 2em)
-  show list: it => { set list(indent: 6pt); it }
+  show list: it => {
+    set list(indent: 2pt); 
+    set enum(indent: 2pt)
+    it 
+  }
   set enum(indent: 2em)
-  show enum: it => { set enum(indent: 6pt); it }
+  show enum: it => { 
+    set enum(indent: 2pt); 
+    set list(indent: 2pt);
+    it 
+  }
   set enum(numbering: numbly("{1:1}.", "{2:1})", "{3:a}."), full: true)
 
   // 引用样式
