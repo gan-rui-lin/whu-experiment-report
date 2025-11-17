@@ -7,6 +7,7 @@
 #import "@preview/a2c-nums:0.0.1": int-to-cn-num, int-to-cn-ancient-num, int-to-cn-simple-num, num-to-cn-currency
 #import cosmos.fancy: *
 #import "@preview/equate:0.3.2": equate
+// #import "@preview/lovelace:0.3.0"
 
 #let md = cmarker-render.with(math: mitex)
 
@@ -87,18 +88,27 @@
   ],)
 
   box(width: 100%, height: 100%)[
+    #v(-2em)
+    #align(center)[
+      #image("./logo/WHU-name.png", width: 40%)
+    ]
     // 顶部学校信息
     #align(center)[
       #set text(font: "SimSun", size: 26pt)
       #cover_header
     ]
-    #v(1.2em)
     #align(center)[
       #set text(font: "SimSun", size: 26pt)
       #report_title
     ]
 
-    #v(3em)
+    #v(.5em)
+
+    #align(center)[
+      #image("./logo/WHU-logo.png", width: 30%)
+    ]
+
+    #v(.5em)
 
     // 主标题
     #align(center)[
@@ -107,7 +117,7 @@
       #title
     ]
 
-    #v(5em)
+    #v(1em)
 
     // 信息栏
     #align(center)[
@@ -119,7 +129,7 @@
       )
     ]
 
-    #v(6em)
+    #v(5em)
 
     // 日期
     #align(center)[
