@@ -7,6 +7,8 @@
 #import "@preview/a2c-nums:0.0.1": int-to-cn-num, int-to-cn-ancient-num, int-to-cn-simple-num, num-to-cn-currency
 #import cosmos.fancy: *
 #import "@preview/equate:0.3.2": equate
+#import "@preview/codly:1.3.0": codly, codly-init
+#import "@preview/codly-languages:0.1.10": codly-languages
 // #import "@preview/lovelace:0.3.0"
 
 #let md = cmarker-render.with(math: mitex)
@@ -372,6 +374,11 @@
 
   // 文档基本信息
   set document(title: title, author: if type(author) == str { author } else { () }, date: none)
+
+    // 代码段设置
+  show: codly-init.with()
+  codly(languages: codly-languages)
+
 
   // 页面计数器
   counter(page).update(1)
