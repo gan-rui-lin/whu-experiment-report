@@ -9,9 +9,39 @@
 #import "@preview/equate:0.3.2": equate
 #import "@preview/codly:1.3.0": codly, codly-init
 #import "@preview/codly-languages:0.1.10": codly-languages
+#import "@preview/gentle-clues:1.2.0": clue
+#import "@preview/cuti:0.3.0": fakebold
+
 // #import "@preview/lovelace:0.3.0"
 
 #let md = cmarker-render.with(math: mitex)
+
+#let font-box = ((name: "Georgia", covers: "latin-in-cjk"), "KaiTi")
+
+// 定义
+#let definition(title: "", ..args) = {
+  clue(
+    title: fakebold(font: font-box, fill: rgb("#2A5DAA"), size: 14pt)[ 定义：#title ],
+    accent-color: rgb("#4C97FF"),
+    ..args,
+  )
+}
+
+#let derivation(title: "", ..args) = {
+  clue(
+    title: fakebold(font: font-box, fill: rgb("#6A3E91"), size: 14pt)[ 推导：#title ],
+    accent-color: rgb("#A06CD5"),
+    ..args,
+  )
+}
+
+#let conclusion(title: "", ..args) = {
+  clue(
+    title: fakebold(font: font-box, fill: rgb("#2A6E5A"), size: 14pt)[ 结论：#title ],
+    accent-color: rgb("#43AA8B"),
+    ..args,
+  )
+}
 
 // 中文报告常用字体与配色）
 #let default-font = (
@@ -57,16 +87,23 @@
   ], [
     #set text(font: "SimSun", size: 15pt)
     #course
-  ], [
-    #set text(font: "SimSun", size: 15pt)
-    指 导 教 师 一：
-  ], [
-    #set text(font: "SimSun", size: 15pt)
-    #teacher1.at(0) #h(1em) #teacher1.at(1)
   ],)
-
-  if teacher2 != none and teacher2.at(0) != "" and teacher2.at(1) != "" {
+  if teacher2 == none or teacher2.at(0) == "" or teacher2.at(1) == "" {
     rows += ([
+      #set text(font: "SimSun", size: 15pt)
+      指 导 教 师 ：
+    ], [
+      #set text(font: "SimSun", size: 15pt)
+      #teacher1.at(0) #h(1em) #teacher1.at(1)
+    ],)
+  } else {
+    rows += ([
+      #set text(font: "SimSun", size: 15pt)
+      指 导 教 师 一：
+    ], [
+      #set text(font: "SimSun", size: 15pt)
+      #teacher1.at(0) #h(1em) #teacher1.at(1)
+    ], [
       #set text(font: "SimSun", size: 15pt)
       指 导 教 师 二：
     ], [
@@ -298,11 +335,11 @@
   // 其中 n 部分可点击并显示为红色
   // 其他类型引用保持默认
   show ref: it => {
-      let el = it.element
-      if el == none { return it }
+    let el = it.element
+    if el == none { return it }
 
-      // 图与表（figure）
-      if el.func() == figure {
+    // 图与表（figure）
+    if el.func() == figure {
       let is-table = el.kind == table
       let prefix = if is-table { "表" } else { "图" }
 
@@ -322,31 +359,29 @@
         ]
       ]
     } else if el.func() == heading {
-        let num = numbering(el.numbering, ..counter(heading).at(el.location()))
-        let tail = if el.level == 1 { "章" } else { "节" }
-        [
-          第
-          #link(el.location())[
-            #set text(fill: red)
-            #num
-          ]
-          #tail
+      let num = numbering(el.numbering, ..counter(heading).at(el.location()))
+      let tail = if el.level == 1 { "章" } else { "节" }
+      [
+        第
+        #link(el.location())[
+          #set text(fill: red)
+          #num
         ]
-
-      } else if el.func() == math.equation {
-        let num = numbering(el.numbering, ..counter(math.equation).at(el.location()))
-        [
-          式 
-          #link(el.location())[
-            #set text(fill: red)
-            #num
-          ]
+        #tail
+      ]
+    } else if el.func() == math.equation {
+      let num = numbering(el.numbering, ..counter(math.equation).at(el.location()))
+      [
+        式
+        #link(el.location())[
+          #set text(fill: red)
+          #num
         ]
-      } else {
-        it
-      }
+      ]
+    } else {
+      it
     }
-
+  }
 
   // 表格样式
   // 统一将图注前缀改为中文“图”，表格为“表”
@@ -357,15 +392,15 @@
   // 列表样式
   set list(indent: 2em)
   show list: it => {
-    set list(indent: 2pt); 
+    set list(indent: 2pt);
     set enum(indent: 2pt)
-    it 
+    it
   }
   set enum(indent: 2em)
-  show enum: it => { 
-    set enum(indent: 2pt); 
+  show enum: it => {
+    set enum(indent: 2pt);
     set list(indent: 2pt);
-    it 
+    it
   }
   set enum(numbering: numbly("{1:1}.", "{2:1})", "{3:a}."), full: true)
 
@@ -375,10 +410,9 @@
   // 文档基本信息
   set document(title: title, author: if type(author) == str { author } else { () }, date: none)
 
-    // 代码段设置
+  // 代码段设置
   show: codly-init.with()
   codly(languages: codly-languages)
-
 
   // 页面计数器
   counter(page).update(1)
@@ -472,5 +506,5 @@
   // 定理环境
   show: show-theorion
 
-  body
+   body
 }
