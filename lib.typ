@@ -11,7 +11,7 @@
 #import "@preview/codly-languages:0.1.10": codly-languages
 #import "@preview/gentle-clues:1.2.0": clue
 #import "@preview/cuti:0.3.0": fakebold
-
+#import "@preview/chic-hdr:0.5.0": *
 // #import "@preview/lovelace:0.3.0"
 
 #let md = cmarker-render.with(math: mitex)
@@ -245,11 +245,23 @@
   set par(leading: 11pt) // 12pt + 11pt = 23pt 基线距
   // emph：拉丁用 TNR，中文用楷体；中文稍微放大一点，避免显小
   show emph: it => {
-    set text(font: ((name: font_used.main, covers: "latin-in-cjk"), font_used.emph-cjk))
-    // 仅对中文（Han script）放大 ~6%
-    show regex("\\p{script=Han}"): set text(size: 1.06em)
-    it
+    // 先设置基准字体（拉丁 → TNR，中文 → KaiTi）
+    set text(font: (
+      (name: font_used.main, covers: "latin-in-cjk"), // Times New Roman
+      font_used.emph-cjk, // KaiTi
+    ))
+
+    // 对整段 emph 内容应用 fakebold 加粗
+    // fakebold 会自动根据当前字体分别对中西文做伪粗体
+    fakebold(
+      weight: none, // 基于 regular 字重描边，更稳定
+    )[
+      // 仅中文（Han）放大 6%
+      #show regex("\\p{script=Han}"): set text(size: 1.06em)
+      #it
+    ]
   }
+
   show raw: set text(font: ((name: font_used.mono, covers: "latin-in-cjk"), font_used.cjk))
   show math.equation: it => {
     set text(font: font_used.math)
@@ -258,14 +270,12 @@
   }
 
   // 强调：拉丁保留 TNR，CJK 使用黑体，并加粗
-  show strong: it => {
-    set text(
-      font: ((name: font_used.main, covers: "latin-in-cjk"), font_used.cjk-bold),
-      weight: "bold",
-      fill: cn-primary-color,
-    )
-    it
-  }
+  show strong: it => [
+    #fakebold(font: (
+      (name: font_used.main, covers: "latin-in-cjk"), // 西文 fakebold: Times New Roman
+      font_used.cjk, // 中文 fakebold: SimSun
+    ), weight: "medium")[ #it ]
+  ]
 
   // 标题样式
   show heading: it => {
@@ -282,8 +292,17 @@
 
   show heading.where(level: 1): it => [
     #pagebreak(weak: true)
-    #set text(font: font_used.cjk-bold, size: 18pt)
-    #align(first_level_heading_position)[#it]
+
+    // 中西文自动切换字体：英文→TNR，中文→cjk-bold
+    #set text(font: (
+      (name: font_used.main, covers: "latin-in-cjk"), // Times New Roman
+      font_used.cjk-bold, // 黑体 or SimHei
+    ), size: 18pt)
+
+    #text(weight:"extrabold")[
+      #align(first_level_heading_position)[#it]
+    ]
+
     #v(11.5pt)
   ]
 
@@ -291,7 +310,7 @@
 
   // 二级标题：黑体 四号（14pt）
   show heading.where(level: 2): it => [
-    #set text(font: font_used.cjk-bold, size: 14pt)
+    #set text(font: font_used.cjk-bold, size: 14pt, weight: "bold")
     #it
   ]
 
@@ -506,5 +525,13 @@
   // 定理环境
   show: show-theorion
 
-   body
+  show: chic.with(
+    chic-footer(center-side: chic-page-number()),
+    chic-header(left-side: emph(title), right-side: emph(chic-heading-name(fill: true))),
+    chic-separator(1pt),
+    // chic-offset(7pt),
+    chic-height(1.5cm),
+  )
+
+  body
 }

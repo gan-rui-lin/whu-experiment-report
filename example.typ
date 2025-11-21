@@ -37,7 +37,7 @@
 #let first-line-indent = auto
 #let font = font                                        // 使用默认 font，传入 none 则使用模板默认字体
 #let first_level_heading_centered = true                // 一级标题是否居中，否则左对齐
-#let heading_numbering = numbly("{1}.", default: "1.1 ")    // 章节编号格式，默认一级标题不编号
+#let heading_numbering = numbly("", default: "1.1 ")    // 章节编号格式，默认一级标题不编号
                                                         // 可选传入numbly格式，下面是示例：
                                                         // numbly("第 {1} 章", default: "1.1 ")
                                                         // numbly("{1}.", default: "1.1 ")
