@@ -14,6 +14,44 @@
 
 // #import "@preview/lovelace:0.3.0"
 
+// Markdown 渲染函数
+// 该函数用于在 Typst 文档中渲染 Markdown 内容，并支持 LaTeX 数学公式。
+// 
+// 功能说明：
+// - 基于 cmarker 包的 render 函数，提供 CommonMark (Markdown) 格式的解析和渲染
+// - 集成 mitex 包，支持在 Markdown 中使用 LaTeX 数学公式（如 $...$, $$...$$）
+// - 可以将 Markdown 格式的文本转换为 Typst 原生内容
+//
+// 使用方法：
+// ```typst
+// #md("
+//   # 标题
+//   
+//   这是一段**加粗**的文字，这是*斜体*文字。
+//   
+//   - 列表项 1
+//   - 列表项 2
+//   
+//   行内数学公式：$a^2 + b^2 = c^2$
+//   
+//   块级数学公式：
+//   $$
+//   \int_0^1 f(x) dx = F(1) - F(0)
+//   $$
+// ")
+// ```
+//
+// 参数：
+// - content (str): Markdown 格式的文本内容
+// - math: 数学公式渲染器，默认使用 mitex，支持 LaTeX 数学语法
+//
+// 返回值：
+// - 渲染后的 Typst 内容
+//
+// 注意事项：
+// - 确保 Markdown 内容符合 CommonMark 规范
+// - 数学公式需要使用标准 LaTeX 语法
+// - 支持大部分常见的 Markdown 特性（标题、列表、强调、链接、代码块等）
 #let md = cmarker-render.with(math: mitex)
 
 #let font-box = ((name: "Georgia", covers: "latin-in-cjk"), "KaiTi")
