@@ -14,7 +14,10 @@
 #import "@preview/chic-hdr:0.5.0": *
 // #import "@preview/lovelace:0.3.0"
 
-#let md = cmarker-render.with(math: mitex)
+#let md = cmarker-render.with(
+  math: mitex,
+  scope: (image: (source, alt: none, format: auto) => image(source, alt: alt, format: format))  
+)
 
 #let font-box = ((name: "Georgia", covers: "latin-in-cjk"), "KaiTi")
 
