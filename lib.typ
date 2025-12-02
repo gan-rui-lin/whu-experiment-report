@@ -440,9 +440,23 @@
   counter(page).update(1)
 
   // 页面设置
-  set page(paper: "a4", header: if here().page() == 1 and maketitle { none } else {
-    counter(footnote).update(0)
-  }, fill: bg-color, numbering: "1", margin: page-margin)
+  set page(
+    paper: "a4", 
+    header: 
+      if here().page() == 1 and maketitle { none } 
+      else {counter(footnote).update(0)}, 
+    footer: context {
+    if here().page() == 1 {
+      none
+    } else {
+      // 获取当前页码并居中显示
+      align(center, counter(page).display("1"))
+    }
+  },
+    fill: bg-color, 
+    numbering: "1", 
+    margin: page-margin,
+)
 
   // 标题页
   if maketitle {
